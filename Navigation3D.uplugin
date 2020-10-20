@@ -1,0 +1,40 @@
+{
+	"FileVersion": 3,
+	"Version": 1,
+	"VersionName": "1.0",
+	"FriendlyName": "Navigation3D",
+	"Description": "Navigation system for 3D pathfinding",
+	"Category": "Other",
+	"CreatedBy": "Reid",
+	"CreatedByURL": "",
+	"DocsURL": "",
+	"MarketplaceURL": "",
+	"SupportURL": "",
+	"CanContainContent": true,
+	"IsBetaVersion": false,
+	"IsExperimentalVersion": false,
+	"Installed": false,
+	"Modules": [
+		{
+			"Name": "Navigation3D",
+			"Type": "Runtime",
+			"LoadingPhase": "Default",
+			"BlacklistPlatform": [
+				"IOS",
+				"MAC",
+				"Linux"
+			],
+			"WhitelistPlatforms" :
+            [
+                "Win64",
+                "Android"
+            ]
+		}
+	],
+	"Plugins": [
+		{
+			"Name": "ProceduralMeshComponent",
+			"Enabled": true
+		}
+	]
+}
