@@ -12,6 +12,7 @@
 #include <unordered_map>
 
 static UMaterial* GridMaterial = nullptr;
+static UMaterialInterface* GridMaterial_OTH = nullptr;
 
 // Sets default values
 ANavigationVolume3D::ANavigationVolume3D()
@@ -38,8 +39,15 @@ ANavigationVolume3D::ANavigationVolume3D()
 	SetActorHiddenInGame(true);
 
 	// Find and save the grid material
-	static ConstructorHelpers::FObjectFinder<UMaterial> materialFinder(TEXT("Material'/Navigation3D/M_Grid.M_Grid'"));
-	GridMaterial = materialFinder.Object;
+	/*static ConstructorHelpers::FObjectFinder<UMaterial> materialFinder(TEXT("Material'/Navigation3D/M_Grid.M_Grid'"));
+	GridMaterial = materialFinder.Object;*/
+
+	static ConstructorHelpers::FObjectFinder<UMaterialInterface> materialFinder(TEXT("Material'/Navigation3D/M_Grid.M_Grid'"));
+	if (materialFinder.Succeeded())
+	{
+		GridMaterial_OTH = materialFinder.Object.Get();
+	}
+
 }
 
 void ANavigationVolume3D::OnConstruction(const FTransform& Transform)
@@ -111,7 +119,7 @@ void ANavigationVolume3D::OnConstruction(const FTransform& Transform)
 	ProceduralMesh->CreateMeshSection(0, vertices, triangles, Normals, UVs, Colors, Tangents, false);
 
 	// Set the material on the procedural mesh so it's color/opacity can be configurable
-	UMaterialInstanceDynamic* dynamicMaterialInstance = UMaterialInstanceDynamic::Create(GridMaterial, this);
+	UMaterialInstanceDynamic* dynamicMaterialInstance = UMaterialInstanceDynamic::Create(GridMaterial_OTH, this, FName("None"));
 	dynamicMaterialInstance->SetVectorParameterValue("Color", Color);
 	dynamicMaterialInstance->SetScalarParameterValue("Opacity", Color.A);
 	ProceduralMesh->SetMaterial(0, dynamicMaterialInstance);
@@ -307,7 +315,8 @@ bool ANavigationVolume3D::FindPath(const FVector& start, const FVector& destinat
 			{
 				TArray<AActor*> outActors;
 				const FVector worldLocation = ConvertCoordinatesToLocation(neighbor->Coordinates);
-				bool traversable = !(UKismetSystemLibrary::BoxOverlapActors(GWorld, worldLocation, FVector(GetDivisionSize() / 2.0f), object_types, actor_class_filter, TArray<AActor*>(), outActors));
+				//bool traversable = !(UKismetSystemLibrary::BoxOverlapActors(GWorld, worldLocation, FVector(GetDivisionSize() / 2.0f), object_types, actor_class_filter, TArray<AActor*>(), outActors));
+				bool traversable = !(UKismetSystemLibrary::BoxOverlapActors(this, worldLocation, FVector(GetDivisionSize() / 2.0f), object_types, actor_class_filter, TArray<AActor*>(), outActors));
 				if (traversable == true)
 				{
 					cameFrom[neighbor] = current;
